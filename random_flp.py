@@ -92,6 +92,21 @@ def send_macos_notification(title, message):
     except Exception:
         pass
 
+def copy_to_clipboard(text):
+    """Attempt to copy text to system clipboard."""
+    try:
+        if sys.platform == "darwin":
+            cmd = ["pbcopy"]
+        elif sys.platform == "linux":
+            cmd = ["xclip", "-selection", "clipboard"]
+        else:
+            cmd = ["clip"]
+        process = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+        process.communicate(text.encode("utf-8"))
+        return process.returncode == 0
+    except Exception:
+        return False
+
 def open_in_finder(path, reveal_file=True):
     """Opens Finder targeting the folder or revealing the file."""
     if reveal_file and os.path.isfile(path):
@@ -132,6 +147,10 @@ def main():
                         help="Reset the history of opened projects")
     parser.add_argument("-f", "--finder", action="store_true", help="Open project folder in macOS Finder instead of FL Studio")
     parser.add_argument("-r", "--reveal", action="store_true", help="Open Finder and select/highlight the .flp file")
+    parser.add_argument("-l", "--list", action="store_true",
+                        help="Print a list of project names (one per line)")
+    parser.add_argument("-c", "--clip", action="store_true",
+                        help="Copy the list of project names to the clipboard (use with -l)")
     parser.add_argument("--include-backups", action="store_true", help="Include files inside Backup folders")
     parser.add_argument("--app", help="Custom FL Studio application path or name")
     args = parser.parse_args()
@@ -150,12 +169,16 @@ def main():
         reset_history(target_dir)
         sys.exit(0)
 
-    print(f"🔍 Searching for project folders in:\n   {target_dir}\n")
+    if not args.list:
+        print(f"🔍 Searching for project folders in:\n   {target_dir}\n")
 
     folder_map = find_flp_files_by_folder(target_dir, include_backups=args.include_backups)
 
     if not folder_map:
-        print("⚠️ No project folders containing .flp files were found.")
+        if args.list:
+            print("No project folders containing .flp files were found.", file=sys.stderr)
+        else:
+            print("⚠️ No project folders containing .flp files were found.")
         sys.exit(0)
 
     total_folders = len(folder_map)
@@ -166,11 +189,32 @@ def main():
         # Check folders not yet opened
         unopened = [f for f in available_folders if os.path.abspath(f) not in history]
         if not unopened:
-            print("🎉 All projects have been opened once! Cycling reset — starting a fresh round.\n")
+            if not args.list:
+                print("🎉 All projects have been opened once! Cycling reset — starting a fresh round.\n")
             history = set()
             unopened = available_folders
         available_folders = unopened
-        print(f"🎯 No-repeat mode active: {total_folders - len(available_folders) + 1} of {total_folders} project(s) this round.")
+        if not args.list:
+            print(f"🎯 No-repeat mode active: {total_folders - len(available_folders) + 1} of {total_folders} project(s) this round.")
+
+    if args.list:
+        names = []
+        for folder in sorted(available_folders):
+            if folder == target_dir:
+                for flp in sorted(folder_map[folder]):
+                    names.append(os.path.splitext(os.path.basename(flp))[0])
+            else:
+                names.append(os.path.basename(folder))
+
+        output = "\n".join(names)
+        print(output)
+
+        if args.clip:
+            if copy_to_clipboard(output):
+                print("\n📋 Copied to clipboard!", file=sys.stderr)
+            else:
+                print("\n⚠️ Could not copy to clipboard", file=sys.stderr)
+        sys.exit(0)
 
     # Step 1: Pick a random project folder
     selected_folder = random.choice(available_folders)

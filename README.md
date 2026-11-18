@@ -1,41 +1,24 @@
-# Random FLP
+# randomflp
 
-A macOS CLI utility and launcher that selects a random FL Studio project (`.flp`) from your project folders and opens it in FL Studio or reveals it in Finder.
-
-## Features
-
-- Scans project directories recursively for FL Studio (`.flp`) projects.
-- Automatically ignores backup directories and autosaved files by default.
-- If a project directory contains multiple `.flp` files, picks the most recently modified file.
-- **No-Repeat Mode (`-u` / `--unique`)**: Tracks opened projects in `.flp_history.json` so you do not repeat projects until all have been opened.
-- **Finder Integration (`-f` / `--finder`, `-r` / `--reveal`)**: Open the project folder directly in macOS Finder or highlight the `.flp` file.
-- macOS notification support when launching projects.
+Pick a random FL Studio project folder and open the latest FLP inside.
 
 ## Usage
 
-### Run via Command Line
-
 ```bash
-# Pick a random project from current directory and open in FL Studio
-python3 random_flp.py
-
-# Specify a project directory
-python3 random_flp.py "/path/to/FL Studio/Projects"
-
-# Pick without repeats until all projects have been opened
-python3 random_flp.py -u
-
-# Open the project folder in Finder instead of FL Studio
-python3 random_flp.py -f
-
-# Reveal the specific FLP file in Finder
-python3 random_flp.py -r
-
-# Reset history tracking
-python3 random_flp.py --reset-history
+python3 random_flp.py [directory] [options]
 ```
 
-### macOS Double-Click Launchers
+## Options
 
-- `Open Random FLP.command`: Double-click in Finder to randomly select and launch a project in FL Studio.
-- `Open Random Folder in Finder.command`: Double-click in Finder to randomly select and reveal a project folder in macOS Finder.
+| Option | Description |
+| --- | --- |
+| `directory` | Path to folder containing projects (default: current directory) |
+| `-h`, `--help` | Show help message and exit |
+| `-u`, `--unique`, `--no-repeat` | Avoid choosing the same project again until all have been opened |
+| `--reset-history` | Reset the history of opened projects |
+| `-f`, `--finder` | Open project folder in macOS Finder instead of FL Studio |
+| `-r`, `--reveal` | Open Finder and select/highlight the `.flp` file |
+| `-l`, `--list` | Print a list of project names (one per line) |
+| `-c`, `--clip` | Copy the list of project names to the clipboard (use with `-l`) |
+| `--include-backups` | Include files inside Backup folders |
+| `--app APP` | Custom FL Studio application path or name |
