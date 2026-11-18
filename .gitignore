@@ -1,0 +1,99 @@
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment and Secrets
+.env
+.env.*
+*.env
+client_secrets.json
+secrets.json
+*.key
+*.pem
+*.token
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Large Data & Downloads
+data/
+downloads/
+Downloads/
+
+# AI Agent Artifacts and Logs
+.gemini/
+.claude/
+.cursor/
+brain/
+*.log
+
+# FL Studio & Audio Media
+*.flp
+*.wav
+*.mp3
+*.aif
+*.aiff
+*.flac
+*.ogg
+*.m4a
+*.mid
+*.midi
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# FL Studio Project & History Folders
+Backup/
+backups/
+Audio/
+audio/
+.flp_history.json
+
+# Sample / Test Project Folders
+dadeelee/
+fallout jerk/
+pad sort of thing/
